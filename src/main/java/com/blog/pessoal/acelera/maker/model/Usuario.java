@@ -1,26 +1,29 @@
 package com.blog.pessoal.acelera.maker.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 @Entity
 public class Usuario {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String id;
+    private Integer id;
 
+    @Column(nullable = false)
     private String nome;
+
+    @Column(nullable = false,  unique = true)
     private String usuario;
+
+    @Column(nullable = false)
     private String senha;
     private String foto;
 
-    public String getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
