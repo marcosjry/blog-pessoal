@@ -1,30 +1,39 @@
 package com.blog.pessoal.acelera.maker.model;
 
+import jakarta.persistence.*;
+
 import java.util.Date;
 
+@Entity
 public class Postagem {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    private Integer id;
     private String titulo;
     private String texto;
     private Date data;
-    private Integer temaId;
-    private Integer userId;
 
-    public Integer getUserId() {
-        return userId;
+    @ManyToOne
+    private Tema tema;
+
+    @ManyToOne
+    private Usuario usuario;
+
+    public Usuario getUserId() {
+        return usuario;
     }
 
-    public void setUserId(Integer userId) {
-        this.userId = userId;
+    public void setUserId(Usuario user) {
+        this.usuario = user;
     }
 
-    public Integer getTemaId() {
-        return temaId;
+    public Tema getTemaId() {
+        return tema;
     }
 
-    public void setTemaId(Integer temaId) {
-        this.temaId = temaId;
+    public void setTemaId(Tema tema) {
+        this.tema = tema;
     }
 
     public Date getData() {
@@ -51,13 +60,12 @@ public class Postagem {
         this.titulo = titulo;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
-
 
 }

@@ -1,9 +1,22 @@
 package com.blog.pessoal.acelera.maker.model;
 
+import jakarta.persistence.*;
+import org.springframework.beans.factory.annotation.Value;
+
+import java.util.List;
+
+@Entity
 public class Tema {
 
-    private Integer id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false,  unique = true)
     private String descricao;
+
+    @OneToMany(mappedBy = "tema", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Postagem> postagem;
 
     public String getDescricao() {
         return descricao;
@@ -13,11 +26,19 @@ public class Tema {
         this.descricao = descricao;
     }
 
-    public Integer getId() {
+    public List<Postagem> getPostagem() {
+        return postagem;
+    }
+
+    public void setPostagem(List<Postagem> postagem) {
+        this.postagem = postagem;
+    }
+
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
