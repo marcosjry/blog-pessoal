@@ -1,18 +1,19 @@
 package com.blog.pessoal.acelera.maker.service.impl;
 
 import com.blog.pessoal.acelera.maker.DTO.usuario.UsuarioDTO;
-import com.blog.pessoal.acelera.maker.exception.UsuarioJaExiste;
+import com.blog.pessoal.acelera.maker.DTO.usuario.UsuarioUpdateDTO;
+import com.blog.pessoal.acelera.maker.exception.UsuarioJaExisteException;
 import com.blog.pessoal.acelera.maker.model.Resposta;
 import com.blog.pessoal.acelera.maker.model.Usuario;
 import com.blog.pessoal.acelera.maker.repository.UsuarioRepository;
 import com.blog.pessoal.acelera.maker.service.UsuarioService;
-import org.hibernate.exception.ConstraintViolationException;
+
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.security.InvalidParameterException;
 import java.util.NoSuchElementException;
 
 @Service
@@ -22,31 +23,23 @@ public class UsuarioServiceImpl implements UsuarioService {
     private UsuarioRepository usuarioRepository;
 
     @Override
-    public Resposta realizarCadastro(UsuarioDTO usuarioDTO) {
+    public Resposta realizarCadastro(UsuarioDTO usuarioDTO) throws UsuarioJaExisteException {
         Resposta resposta = new Resposta();
         try {
             criaUsuario(usuarioDTO);
             resposta.setStatus("success");
             resposta.setMensagem("Usuário criado com sucesso.");
-        } catch (UsuarioJaExiste e) {
-            resposta.setMensagem(e.getMessage());
-            resposta.setStatus("conflict");
-        } catch (Exception e) {
-            resposta.setMensagem(e.getMessage());
-            resposta.setStatus("error");
+        } catch (RuntimeException e) {
+            throw new RuntimeException("Erro durante a criação do Usuário.");
         }
         return resposta;
     }
 
-    public void criaUsuario(UsuarioDTO usuarioDTO) throws UsuarioJaExiste {
-
-        boolean ehValido = validaUsuarioDTO(usuarioDTO);
-        if(!ehValido)
-            throw new InvalidParameterException("Parâmetros Vazio ou inválido.");
+    public void criaUsuario(UsuarioDTO usuarioDTO) throws UsuarioJaExisteException {
 
         boolean existe = verificaSeUsuarioExiste(usuarioDTO.usuario());
         if(existe)
-            throw new UsuarioJaExiste("Usuario já registrado.");
+            throw new UsuarioJaExisteException("Usuario já registrado.");
 
         Usuario userToCreate = new Usuario();
         userToCreate.setUsuario(usuarioDTO.usuario());
@@ -57,70 +50,52 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     @Override
-    public Resposta realizaAtualizacao(Integer id, UsuarioDTO usuarioDTO) {
-        try {
+    public Resposta realizaAtualizacao(Long id, UsuarioUpdateDTO usuarioDTO) throws UsuarioJaExisteException {
             atualizaCadastro(id, usuarioDTO);
-            return new Resposta("Usuario Atualizado com Sucesso", "success");
-        } catch (ConstraintViolationException | DataIntegrityViolationException e) {
-            return new Resposta("Usuário indisponível, tente novamente.", "conflict");
-        } catch (NoSuchElementException e) {
-            return new Resposta(e.getMessage(), "not found");
-        } catch (Exception e) {
-            return new Resposta("Erro durante a atualização do Usuário.", "error");
-        }
+            return new Resposta("Usuario Atualizado com Sucesso.", "success");
     }
 
     @Override
-    public Resposta realizaDelete(Integer id) {
-        try {
+    public Resposta realizaDelete(Long id) {
             deletaUsuario(id);
             return new Resposta("Usuário deletado com sucesso.", "success");
-        } catch (NoSuchElementException e) {
-            return new Resposta(e.getMessage(), "not found");
-        } catch (Exception e) {
-            return new Resposta(e.getMessage(), "error");
-        }
     }
 
 
-    public void deletaUsuario(Integer id) {
+    public void deletaUsuario(Long id) {
         Usuario usuario = buscaUsuario(id);
         usuarioRepository.deleteById(usuario.getId());
     }
 
-
     @Transactional
-    public UsuarioDTO atualizaCadastro(Integer id, UsuarioDTO usuarioDTO) throws ConstraintViolationException {
-        Usuario usuario = buscaUsuario(id);
+    public UsuarioDTO atualizaCadastro(Long id, UsuarioUpdateDTO usuarioDTO) throws UsuarioJaExisteException {
+        try {
+            Usuario usuario = buscaUsuario(id);
 
-        Usuario atualizado = atualizaPorCampo(usuarioDTO, usuario);
+            Usuario atualizado = atualizaPorCampo(usuarioDTO, usuario);
 
-        Usuario usuarioAtualizado = usuarioRepository.save(atualizado);
-        return new UsuarioDTO(
-                usuarioAtualizado.getNome(),
-                usuarioAtualizado.getUsuario(),
-                usuarioAtualizado.getSenha(),
-                usuarioAtualizado.getFoto()
-        );
+            Usuario usuarioAtualizado = usuarioRepository.save(atualizado);
+            return new UsuarioDTO(
+                    usuarioAtualizado.getNome(),
+                    usuarioAtualizado.getUsuario(),
+                    usuarioAtualizado.getSenha(),
+                    usuarioAtualizado.getFoto()
+            );
+        } catch (ConstraintViolationException | DataIntegrityViolationException e) {
+            throw new UsuarioJaExisteException("Usuário já existe. Tente novamente.");
+        }
     }
 
-    public Usuario atualizaPorCampo(UsuarioDTO usuarioDTO, Usuario usuario) {
-        if(!usuarioDTO.usuario().isEmpty() && !usuarioDTO.usuario().isBlank())
+    public Usuario atualizaPorCampo(UsuarioUpdateDTO usuarioDTO, Usuario usuario) {
+        if(usuarioDTO.usuario() != null)
             usuario.setUsuario(usuarioDTO.usuario());
-        if(!usuarioDTO.senha().isEmpty() && !usuarioDTO.senha().isBlank())
+        if(usuarioDTO.senha() != null)
             usuario.setSenha(usuarioDTO.senha());
-        if(!usuarioDTO.foto().isEmpty() && !usuarioDTO.foto().isBlank())
+        if(usuarioDTO.foto()  != null)
             usuario.setFoto(usuarioDTO.foto());
+        if(usuarioDTO.nome()  != null)
+            usuario.setNome(usuarioDTO.nome());
         return usuario;
-    }
-
-    public boolean validaUsuarioDTO(UsuarioDTO usuarioDTO) {
-        return !usuarioDTO.usuario().isEmpty()
-                && !usuarioDTO.senha().isEmpty()
-                && !usuarioDTO.nome().isEmpty()
-                && !usuarioDTO.nome().isBlank()
-                && !usuarioDTO.senha().isBlank()
-                && !usuarioDTO.usuario().isBlank();
     }
 
     @Override
@@ -129,7 +104,7 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     @Override
-    public Usuario buscaUsuario(Integer id) {
+    public Usuario buscaUsuario(Long id) {
         return usuarioRepository.findById(id).orElseThrow(() -> new NoSuchElementException("Usuário não encontrado."));
     }
 
