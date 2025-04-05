@@ -1,11 +1,14 @@
 package com.blog.pessoal.acelera.maker.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.Date;
 
 @Entity
 public class Postagem {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -15,9 +18,11 @@ public class Postagem {
     private Date data;
 
     @ManyToOne
+    @JoinColumn(name = "tema_id", nullable = false)
     private Tema tema;
 
     @ManyToOne
+    @JoinColumn(name = "usuario_id", nullable = false)
     private Usuario usuario;
 
     public Usuario getUserId() {
@@ -28,11 +33,11 @@ public class Postagem {
         this.usuario = user;
     }
 
-    public Tema getTemaId() {
+    public Tema getTema() {
         return tema;
     }
 
-    public void setTemaId(Tema tema) {
+    public void setTema(Tema tema) {
         this.tema = tema;
     }
 
