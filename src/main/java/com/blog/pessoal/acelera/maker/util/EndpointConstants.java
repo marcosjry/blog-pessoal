@@ -2,6 +2,10 @@ package com.blog.pessoal.acelera.maker.util;
 
 public class EndpointConstants {
 
+        private EndpointConstants() {
+                throw new UnsupportedOperationException("Classe utilitária.");
+        }
+
         public static final String POSTAGENS = "/api/postagens";
         public static final String POSTAGENS_ID = "/api/postagens/{id}";
         public static final String POSTAGENS_FILTRO = "/api/postagens/filtro?";
