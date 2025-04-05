@@ -53,7 +53,7 @@ public class PostagemServiceImpl implements PostagemService {
         postagem.setTema(tema);
 
         postagemRepository.save(postagem);
-        usuarioService.salveUsuario(usuario);
+        usuarioService.salvaUsuario(usuario);
     }
 
     @Override
