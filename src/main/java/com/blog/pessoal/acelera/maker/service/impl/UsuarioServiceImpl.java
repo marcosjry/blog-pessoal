@@ -8,7 +8,7 @@ import com.blog.pessoal.acelera.maker.model.Usuario;
 import com.blog.pessoal.acelera.maker.repository.UsuarioRepository;
 import com.blog.pessoal.acelera.maker.service.UsuarioService;
 
-import jakarta.validation.ConstraintViolationException;
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -106,6 +106,16 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Override
     public Usuario buscaUsuario(Long id) {
         return usuarioRepository.findById(id).orElseThrow(() -> new NoSuchElementException("Usuário não encontrado."));
+    }
+
+    @Override
+    public Usuario buscaUsuario(String usuario) {
+        return usuarioRepository.findByUsuario(usuario).orElseThrow(() -> new NoSuchElementException("Usuário não encontrado."));
+    }
+
+    @Override
+    public void salvaUsuario(Usuario usuario) {
+        usuarioRepository.save(usuario);
     }
 
 }
