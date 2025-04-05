@@ -22,6 +22,7 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
+    @Transactional
     @Override
     public Resposta realizarCadastro(UsuarioDTO usuarioDTO) throws UsuarioJaExisteException {
         Resposta resposta = new Resposta();
@@ -49,12 +50,14 @@ public class UsuarioServiceImpl implements UsuarioService {
         usuarioRepository.save(userToCreate);
     }
 
+    @Transactional
     @Override
     public Resposta realizaAtualizacao(Long id, UsuarioUpdateDTO usuarioDTO) throws UsuarioJaExisteException {
             atualizaCadastro(id, usuarioDTO);
             return new Resposta("Usuario Atualizado com Sucesso.", "success");
     }
 
+    @Transactional
     @Override
     public Resposta realizaDelete(Long id) {
             deletaUsuario(id);
@@ -67,7 +70,6 @@ public class UsuarioServiceImpl implements UsuarioService {
         usuarioRepository.deleteById(usuario.getId());
     }
 
-    @Transactional
     public UsuarioDTO atualizaCadastro(Long id, UsuarioUpdateDTO usuarioDTO) throws UsuarioJaExisteException {
         try {
             Usuario usuario = buscaUsuario(id);

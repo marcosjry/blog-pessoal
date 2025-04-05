@@ -33,18 +33,21 @@ public class TemaServiceImpl implements TemaService {
             }
     }
 
+    @Transactional
     @Override
     public Resposta criarTema(TemaDTO temaDTO) throws TemaExisteException {
         criaTema(temaDTO);
         return new Resposta("Tema criado com sucesso.", "success");
     }
 
+    @Transactional
     @Override
     public Resposta atualiza(Long id, TemaDTO temaDTO) throws TemaExisteException {
         atualizaTema(id, temaDTO);
         return new Resposta("Tema atualizado com sucesso.", "success");
     }
 
+    @Transactional
     @Override
     public Resposta realizaDelete(Long id) {
         deletaTema(id);
