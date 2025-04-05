@@ -34,6 +34,7 @@ public class PostagemServiceImpl implements PostagemService {
     @Autowired
     private UsuarioService usuarioService;
 
+    @Transactional
     @Override
     public Resposta criarPostagem(PostagemDTO postagemDTO, String usuario) {
         criaPostagem(postagemDTO, usuario);
@@ -56,13 +57,13 @@ public class PostagemServiceImpl implements PostagemService {
         usuarioService.salvaUsuario(usuario);
     }
 
+    @Transactional
     @Override
     public Resposta atualizaPostagem(Long id, PostagemUpdateDTO postagemUpdateDTO) {
         atualizaInfoPostagem(id, postagemUpdateDTO);
         return new Resposta("Postagem atualizada com sucesso.", "success");
     }
 
-    @Transactional
     public void atualizaInfoPostagem(Long id, PostagemUpdateDTO postagemUpdateDTO) {
         Postagem postagem = buscaPostagem(id);
         Postagem postagemAlterada = verificaCampos(postagem, postagemUpdateDTO);
@@ -84,6 +85,7 @@ public class PostagemServiceImpl implements PostagemService {
         return postagemRepository.findAll();
     }
 
+    @Transactional
     @Override
     public Resposta removerPostagem(Long id, String usuario) throws IntegridadeVioladaException {
         removePostagem(id, usuario);
