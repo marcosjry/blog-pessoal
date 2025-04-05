@@ -8,13 +8,11 @@ import com.blog.pessoal.acelera.maker.model.Postagem;
 import com.blog.pessoal.acelera.maker.model.Resposta;
 import com.blog.pessoal.acelera.maker.service.PostagemService;
 import com.blog.pessoal.acelera.maker.util.CapturaSubject;
-import com.blog.pessoal.acelera.maker.util.FormataResposta;
+import com.blog.pessoal.acelera.maker.util.FormataRespostaGenerics;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -53,7 +51,7 @@ public class PostagemController {
     ) {
         List<Postagem> postagens = postagemService.buscaPorFiltro(autor, tema);
         return ResponseEntity.accepted().body(
-                FormataResposta.retornaFormatado(
+                FormataRespostaGenerics.retornaFormatado(
                         postagens,
                         p -> new PostagemToResponse(
                                 p.getId(),
@@ -70,7 +68,7 @@ public class PostagemController {
     public ResponseEntity<List<PostagemToResponse>> listarTodasPostagens() {
         List<Postagem> dto = postagemService.buscaTodasPostagens();
         return ResponseEntity.accepted().body(
-                FormataResposta.retornaFormatado(
+                FormataRespostaGenerics.retornaFormatado(
                         dto,
                         p -> new PostagemToResponse(
                                 p.getId(),
