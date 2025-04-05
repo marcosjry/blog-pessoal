@@ -1,4 +1,24 @@
 package com.blog.pessoal.acelera.maker.service;
 
+import com.blog.pessoal.acelera.maker.DTO.postagem.PostagemDTO;
+import com.blog.pessoal.acelera.maker.DTO.postagem.PostagemUpdateDTO;
+import com.blog.pessoal.acelera.maker.exception.IntegridadeVioladaException;
+import com.blog.pessoal.acelera.maker.model.Postagem;
+import com.blog.pessoal.acelera.maker.model.Resposta;
+
+import java.util.List;
+
 public interface PostagemService {
+
+    Resposta criarPostagem(PostagemDTO postagemDTO, String username);
+
+    Resposta atualizaPostagem(Long id, PostagemUpdateDTO postagemUpdateDTO);
+
+    Resposta removerPostagem(Long id, String usuario) throws IntegridadeVioladaException;
+
+    Postagem buscaPostagem(Long id);
+
+    List<Postagem> buscaPorFiltro(Long autorId, Long temaId);
+
+    List<Postagem> buscaTodasPostagens();
 }
