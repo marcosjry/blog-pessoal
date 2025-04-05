@@ -20,4 +20,7 @@ public interface UsuarioService {
 
     Usuario buscaUsuario(Long id);
 
+    Usuario buscaUsuario(String usuario);
+
+    void salvaUsuario(Usuario usuario);
 }

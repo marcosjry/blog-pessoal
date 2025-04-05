@@ -31,7 +31,7 @@ public class GlobalControllerException {
 
     @ExceptionHandler(IntegridadeVioladaException.class)
     public ResponseEntity<String> handleRollbackException(IntegridadeVioladaException e) {
-        return ResponseEntity.badRequest().body(e.getMessage());
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
     }
 
     @ExceptionHandler(TransactionSystemException.class)

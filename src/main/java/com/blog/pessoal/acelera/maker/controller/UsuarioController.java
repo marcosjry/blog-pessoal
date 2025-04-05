@@ -2,20 +2,19 @@ package com.blog.pessoal.acelera.maker.controller;
 
 import com.blog.pessoal.acelera.maker.DTO.usuario.UsuarioDTO;
 import com.blog.pessoal.acelera.maker.DTO.usuario.UsuarioUpdateDTO;
-import com.blog.pessoal.acelera.maker.exception.IntegridadeVioladaException;
 import com.blog.pessoal.acelera.maker.exception.UsuarioJaExisteException;
 import com.blog.pessoal.acelera.maker.model.Resposta;
 import com.blog.pessoal.acelera.maker.service.UsuarioService;
+
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(path = "/api/usuarios")
-public class UserController {
+public class UsuarioController {
 
     @Autowired
     private UsuarioService usuarioService;
