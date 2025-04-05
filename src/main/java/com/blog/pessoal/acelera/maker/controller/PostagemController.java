@@ -51,7 +51,7 @@ public class PostagemController {
     ) {
         List<Postagem> postagens = postagemService.buscaPorFiltro(autor, tema);
         return ResponseEntity.accepted().body(
-                FormataRespostaGenerics.retornaFormatado(
+                FormataRespostaGenerics.retornaListaFormatada(
                         postagens,
                         p -> new PostagemToResponse(
                                 p.getId(),
@@ -68,7 +68,7 @@ public class PostagemController {
     public ResponseEntity<List<PostagemToResponse>> listarTodasPostagens() {
         List<Postagem> dto = postagemService.buscaTodasPostagens();
         return ResponseEntity.accepted().body(
-                FormataRespostaGenerics.retornaFormatado(
+                FormataRespostaGenerics.retornaListaFormatada(
                         dto,
                         p -> new PostagemToResponse(
                                 p.getId(),
