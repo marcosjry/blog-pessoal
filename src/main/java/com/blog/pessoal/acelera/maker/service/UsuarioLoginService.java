@@ -5,5 +5,5 @@ import com.blog.pessoal.acelera.maker.exception.UsuarioSenhaInvalidoException;
 
 public interface UsuarioLoginService {
 
-    String realizaLogin(UsuarioLoginDTO usuarioLoginDTO) throws UsuarioSenhaInvalidoException;
+    UsuarioLoginDTO realizaLogin(UsuarioLoginDTO usuarioLoginDTO) throws UsuarioSenhaInvalidoException;
 }

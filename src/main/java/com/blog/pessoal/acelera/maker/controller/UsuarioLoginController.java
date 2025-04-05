@@ -3,6 +3,7 @@ package com.blog.pessoal.acelera.maker.controller;
 import com.blog.pessoal.acelera.maker.DTO.usuario.UsuarioLoginDTO;
 import com.blog.pessoal.acelera.maker.exception.UsuarioSenhaInvalidoException;
 import com.blog.pessoal.acelera.maker.service.UsuarioLoginService;
+import com.blog.pessoal.acelera.maker.util.FormataRespostaGenerics;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,8 +20,8 @@ public class UsuarioLoginController {
     private UsuarioLoginService usuarioLoginService;
 
     @PostMapping
-    public ResponseEntity<String> validaLogin(@Valid @RequestBody UsuarioLoginDTO usuarioLoginDTO) throws UsuarioSenhaInvalidoException {
-        String token = usuarioLoginService.realizaLogin(usuarioLoginDTO);
-        return ResponseEntity.accepted().body("bearer-token:" + token);
+    public ResponseEntity<UsuarioLoginDTO> validaLogin(@Valid @RequestBody UsuarioLoginDTO usuarioLoginDTO) throws UsuarioSenhaInvalidoException {
+        UsuarioLoginDTO usuario = usuarioLoginService.realizaLogin(usuarioLoginDTO);
+        return ResponseEntity.accepted().body(usuario);
     }
 }
