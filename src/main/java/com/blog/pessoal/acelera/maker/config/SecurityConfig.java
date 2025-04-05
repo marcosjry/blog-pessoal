@@ -2,6 +2,7 @@ package com.blog.pessoal.acelera.maker.config;
 
 import com.blog.pessoal.acelera.maker.service.TokenService;
 import com.blog.pessoal.acelera.maker.service.UsuarioService;
+import com.blog.pessoal.acelera.maker.util.EndpointConstants;
 import com.blog.pessoal.acelera.maker.util.SecretUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,21 +46,21 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(HttpMethod.POST, "/api/usuarios").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/usuarios/login").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/usuarios/login").permitAll()// Permite o acesso ao login
-                        .requestMatchers(HttpMethod.POST, "/api/usuarios").hasRole("USER")
-                        .requestMatchers(HttpMethod.PUT, "/api/usuarios/{id}").hasRole("USER")
-                        .requestMatchers(HttpMethod.DELETE, "/api/usuarios/{id}").hasRole("USER")
-                        .requestMatchers(HttpMethod.POST, "/api/temas").hasRole("USER")
-                        .requestMatchers(HttpMethod.PUT, "/api/temas/{id}").hasRole("USER")
-                        .requestMatchers(HttpMethod.DELETE, "/api/temas/{id}").hasRole("USER")
-                        .requestMatchers(HttpMethod.GET, "/api/temas").hasRole("USER")
-                        .requestMatchers(HttpMethod.POST, "/api/postagens").hasRole("USER")
-                        .requestMatchers(HttpMethod.PUT, "/api/postagens").hasRole("USER")
-                        .requestMatchers(HttpMethod.DELETE, "/api/postagens/{id}").hasRole("USER")
-                        .requestMatchers(HttpMethod.GET, "/api/postagens/filtro?").hasRole("USER")
-                        .requestMatchers(HttpMethod.GET, "/api/postagens").hasRole("USER")
+                        .requestMatchers(HttpMethod.POST, EndpointConstants.USUARIOS).permitAll()
+                        .requestMatchers(HttpMethod.GET, EndpointConstants.USUARIOS_LOGIN).permitAll()
+                        .requestMatchers(HttpMethod.POST,EndpointConstants.USUARIOS_LOGIN).permitAll()// Permite o acesso ao login
+                        .requestMatchers(HttpMethod.POST, EndpointConstants.USUARIOS).hasRole("USER")
+                        .requestMatchers(HttpMethod.PUT, EndpointConstants.USUARIOS_ID).hasRole("USER")
+                        .requestMatchers(HttpMethod.DELETE, EndpointConstants.USUARIOS_ID).hasRole("USER")
+                        .requestMatchers(HttpMethod.POST, EndpointConstants.TEMAS).hasRole("USER")
+                        .requestMatchers(HttpMethod.PUT, EndpointConstants.TEMAS_ID).hasRole("USER")
+                        .requestMatchers(HttpMethod.DELETE, EndpointConstants.TEMAS_ID).hasRole("USER")
+                        .requestMatchers(HttpMethod.GET, EndpointConstants.TEMAS).hasRole("USER")
+                        .requestMatchers(HttpMethod.POST, EndpointConstants.POSTAGENS).hasRole("USER")
+                        .requestMatchers(HttpMethod.PUT, EndpointConstants.POSTAGENS_ID).hasRole("USER")
+                        .requestMatchers(HttpMethod.DELETE, EndpointConstants.POSTAGENS_ID).hasRole("USER")
+                        .requestMatchers(HttpMethod.GET, EndpointConstants.POSTAGENS_FILTRO).hasRole("USER")
+                        .requestMatchers(HttpMethod.GET, EndpointConstants.POSTAGENS).hasRole("USER")
                         .anyRequest().authenticated() // Exige autenticação para outras rotas
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
