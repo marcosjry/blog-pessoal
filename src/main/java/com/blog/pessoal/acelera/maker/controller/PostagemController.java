@@ -3,7 +3,7 @@ package com.blog.pessoal.acelera.maker.controller;
 import com.blog.pessoal.acelera.maker.DTO.postagem.PostagemDTO;
 import com.blog.pessoal.acelera.maker.DTO.postagem.PostagemToResponse;
 import com.blog.pessoal.acelera.maker.DTO.postagem.PostagemUpdateDTO;
-import com.blog.pessoal.acelera.maker.exception.IntegridadeVioladaException;
+import com.blog.pessoal.acelera.maker.exception.PermissaoNaoAutorizada;
 import com.blog.pessoal.acelera.maker.model.Postagem;
 import com.blog.pessoal.acelera.maker.model.Resposta;
 import com.blog.pessoal.acelera.maker.service.PostagemService;
@@ -32,13 +32,14 @@ public class PostagemController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<String> atualizaPostagem(@PathVariable Long id,@Valid @RequestBody PostagemUpdateDTO postagemDTO) {
-        Resposta resposta = postagemService.atualizaPostagem(id,postagemDTO);
+    public ResponseEntity<String> atualizaPostagem(@PathVariable Long id,@Valid @RequestBody PostagemUpdateDTO postagemDTO) throws PermissaoNaoAutorizada {
+        String usuario = CapturaSubject.captura();
+        Resposta resposta = postagemService.atualizaPostagem(id,postagemDTO, usuario);
         return ResponseEntity.status(HttpStatus.CREATED).body(resposta.getMensagem());
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> removePostagem(@PathVariable Long id) throws IntegridadeVioladaException {
+    public ResponseEntity<String> removePostagem(@PathVariable Long id) throws PermissaoNaoAutorizada {
         String usuario = CapturaSubject.captura();
         Resposta resposta = postagemService.removerPostagem(id, usuario);
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(resposta.getMensagem());
