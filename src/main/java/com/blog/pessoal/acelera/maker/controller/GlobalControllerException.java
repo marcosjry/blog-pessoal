@@ -51,21 +51,12 @@ public class GlobalControllerException {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
     }
 
-    @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<String> trataExcecaoGenerica(RuntimeException e) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro durante execução.");
-    }
-
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<String> trataViolacaoArgumento(MethodArgumentNotValidException e) {
         String message = e.getBindingResult().getFieldError().getDefaultMessage();
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(message);
     }
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<String> trataExcecaoGenerica(Exception ex) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro no servidor.");
-    }
 }
 
 
