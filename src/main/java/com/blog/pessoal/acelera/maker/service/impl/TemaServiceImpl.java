@@ -7,9 +7,7 @@ import com.blog.pessoal.acelera.maker.model.Tema;
 import com.blog.pessoal.acelera.maker.repository.TemaRepository;
 import com.blog.pessoal.acelera.maker.service.TemaService;
 import jakarta.transaction.Transactional;
-import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,15 +20,14 @@ public class TemaServiceImpl implements TemaService {
     private TemaRepository temaRepository;
 
     public void criaTema(TemaDTO temaDTO) throws TemaExisteException, RuntimeException {
-            try {
-                Tema temaToCreate = new Tema();
-                temaToCreate.setDescricao(temaDTO.descricao());
-                temaRepository.save(temaToCreate);
-            } catch (ConstraintViolationException | DataIntegrityViolationException e) {
-                throw new TemaExisteException("Tema idêntico já criado.");
-            } catch (RuntimeException e) {
-                throw new RuntimeException("Erro durante a criação do tema.");
-            }
+        lancaExceptionSeTemaExiste(temaDTO.descricao());
+        try {
+            Tema temaToCreate = new Tema();
+            temaToCreate.setDescricao(temaDTO.descricao());
+            temaRepository.save(temaToCreate);
+        } catch (RuntimeException e) {
+            throw new RuntimeException("Erro durante a criação do tema.");
+        }
     }
 
     @Transactional
@@ -64,20 +61,28 @@ public class TemaServiceImpl implements TemaService {
         return temaRepository.findById(id).orElseThrow(() -> new NoSuchElementException("Tema não encontrado."));
     }
 
-    @Transactional
     public void atualizaTema(Long id,TemaDTO temaDTO) throws TemaExisteException {
-        try {
-            Tema tema = buscaTema(id);
+        lancaExceptionSeTemaExiste(temaDTO.descricao());
+
+        Tema tema = buscaTema(id);
             tema.setDescricao(temaDTO.descricao());
             temaRepository.save(tema);
-        } catch (ConstraintViolationException | DataIntegrityViolationException e) {
-            throw new TemaExisteException("Tema já existe.");
-        }
+    }
+
+    void lancaExceptionSeTemaExiste(String descricao) throws TemaExisteException {
+        boolean existeDescricao = existsByDescricao(descricao);
+        if(existeDescricao)
+            throw new TemaExisteException("Tema já existe. Tente novamente.");
     }
 
     @Override
     public List<Tema> buscaTodosTemas() {
         return buscaTemas();
+    }
+
+    @Override
+    public boolean existsByDescricao(String descricao) {
+        return temaRepository.existsByDescricao(descricao).orElseThrow(() -> new NoSuchElementException("Nenhuma descrição encontrada."));
     }
 
     public List<Tema> buscaTemas(){

@@ -17,5 +17,7 @@ public interface TemaService {
 
     List<Tema> buscaTodosTemas();
 
+    boolean existsByDescricao(String descricao);
+
     Tema buscaTema(Long id);
 }
