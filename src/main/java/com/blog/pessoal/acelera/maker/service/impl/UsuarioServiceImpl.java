@@ -38,9 +38,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     public void criaUsuario(UsuarioDTO usuarioDTO) throws UsuarioJaExisteException {
 
-        boolean existe = verificaSeUsuarioExiste(usuarioDTO.usuario());
-        if(existe)
-            throw new UsuarioJaExisteException("Usuario já registrado.");
+        lancaExceptionSeUsuarioExiste(usuarioDTO.usuario());
 
         Usuario userToCreate = new Usuario();
         userToCreate.setUsuario(usuarioDTO.usuario());
@@ -53,8 +51,8 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Transactional
     @Override
     public Resposta realizaAtualizacao(Long id, UsuarioUpdateDTO usuarioDTO) throws UsuarioJaExisteException {
-            atualizaCadastro(id, usuarioDTO);
-            return new Resposta("Usuario Atualizado com Sucesso.", "success");
+        atualizaCadastro(id, usuarioDTO);
+        return new Resposta("Usuario Atualizado com Sucesso.", "success");
     }
 
     @Transactional
@@ -71,6 +69,7 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     public UsuarioDTO atualizaCadastro(Long id, UsuarioUpdateDTO usuarioDTO) throws UsuarioJaExisteException {
+        lancaExceptionSeUsuarioExiste(usuarioDTO.usuario());
         try {
             Usuario usuario = buscaUsuario(id);
 
@@ -120,4 +119,9 @@ public class UsuarioServiceImpl implements UsuarioService {
         usuarioRepository.save(usuario);
     }
 
+    void lancaExceptionSeUsuarioExiste(String usuario) throws UsuarioJaExisteException {
+        boolean existeUsuario = verificaSeUsuarioExiste(usuario);
+        if(existeUsuario)
+            throw new UsuarioJaExisteException("Usuário já existe. Tente novamente.");
+    }
 }

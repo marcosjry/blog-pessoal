@@ -2,7 +2,7 @@ package com.blog.pessoal.acelera.maker.service.impl;
 
 import com.blog.pessoal.acelera.maker.DTO.postagem.PostagemDTO;
 import com.blog.pessoal.acelera.maker.DTO.postagem.PostagemUpdateDTO;
-import com.blog.pessoal.acelera.maker.exception.IntegridadeVioladaException;
+import com.blog.pessoal.acelera.maker.exception.PermissaoNaoAutorizada;
 import com.blog.pessoal.acelera.maker.model.Postagem;
 import com.blog.pessoal.acelera.maker.model.Resposta;
 import com.blog.pessoal.acelera.maker.model.Tema;
@@ -59,13 +59,18 @@ public class PostagemServiceImpl implements PostagemService {
 
     @Transactional
     @Override
-    public Resposta atualizaPostagem(Long id, PostagemUpdateDTO postagemUpdateDTO) {
-        atualizaInfoPostagem(id, postagemUpdateDTO);
+    public Resposta atualizaPostagem(Long id, PostagemUpdateDTO postagemUpdateDTO, String usuario) throws PermissaoNaoAutorizada {
+        atualizaInfoPostagem(id, postagemUpdateDTO, usuario);
         return new Resposta("Postagem atualizada com sucesso.", "success");
     }
 
-    public void atualizaInfoPostagem(Long id, PostagemUpdateDTO postagemUpdateDTO) {
+    public void atualizaInfoPostagem(Long id, PostagemUpdateDTO postagemUpdateDTO, String usuario) throws PermissaoNaoAutorizada {
         Postagem postagem = buscaPostagem(id);
+
+        Usuario usuarioEncontrado = usuarioService.buscaUsuario(usuario);
+        if(!Objects.equals(usuarioEncontrado.getId(), postagem.getUserId().getId()))
+            throw new PermissaoNaoAutorizada("Usuário não permitido.");
+
         Postagem postagemAlterada = verificaCampos(postagem, postagemUpdateDTO);
         postagemRepository.save(postagemAlterada);
     }
@@ -87,17 +92,17 @@ public class PostagemServiceImpl implements PostagemService {
 
     @Transactional
     @Override
-    public Resposta removerPostagem(Long id, String usuario) throws IntegridadeVioladaException {
+    public Resposta removerPostagem(Long id, String usuario) throws PermissaoNaoAutorizada {
         removePostagem(id, usuario);
         return new Resposta("Postagem removida com sucesso.", "success");
     }
 
-    public void removePostagem(Long id, String usuario) throws IntegridadeVioladaException {
+    public void removePostagem(Long id, String usuario) throws PermissaoNaoAutorizada {
         Postagem postagem = buscaPostagem(id);
 
         Usuario usuarioEncontrado = usuarioService.buscaUsuario(usuario);
         if(!Objects.equals(usuarioEncontrado.getId(), postagem.getUserId().getId()))
-            throw new IntegridadeVioladaException("Usuário não autorizado.");
+            throw new PermissaoNaoAutorizada("Usuário não autorizado.");
         postagemRepository.deleteById(postagem.getId());
     }
 
