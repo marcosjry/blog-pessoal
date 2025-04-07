@@ -1,6 +1,7 @@
 package com.blog.pessoal.acelera.maker.service.impl;
 
 import com.blog.pessoal.acelera.maker.DTO.usuario.UsuarioLoginDTO;
+import com.blog.pessoal.acelera.maker.DTO.usuario.UsuarioLoginReqDTO;
 import com.blog.pessoal.acelera.maker.exception.UsuarioSenhaInvalidoException;
 import com.blog.pessoal.acelera.maker.model.Usuario;
 import com.blog.pessoal.acelera.maker.service.TokenService;
@@ -28,8 +29,9 @@ public class UsuarioLoginServiceImpl implements UsuarioLoginService {
     private TokenService tokenService;
 
     @Override
-    public UsuarioLoginDTO realizaLogin(UsuarioLoginDTO usuarioLoginDTO) throws UsuarioSenhaInvalidoException {
+    public UsuarioLoginDTO realizaLogin(UsuarioLoginReqDTO usuarioLoginDTO) throws UsuarioSenhaInvalidoException {
         Usuario usuario = usuarioService.buscaUsuario(usuarioLoginDTO.usuario());
+
         boolean validaSenha = passwordEncoder.matches(usuarioLoginDTO.senha(), usuario.getSenha());
         if(!validaSenha)
             throw new UsuarioSenhaInvalidoException("Usuário ou senha Inválido.");
