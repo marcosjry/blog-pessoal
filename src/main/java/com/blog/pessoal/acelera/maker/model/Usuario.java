@@ -12,6 +12,23 @@ import java.util.List;
 @Entity
 public class Usuario implements UserDetails {
 
+    public Usuario () {}
+
+    public Usuario (Long id, String nome, String usuario, String senha, String foto) {
+        setId(id);
+        setNome(nome);
+        setUsuario(usuario);
+        setSenha(senha);
+        setFoto(foto);
+    }
+
+    public Usuario ( String nome, String usuario, String senha, String foto) {
+        setNome(nome);
+        setUsuario(usuario);
+        setSenha(senha);
+        setFoto(foto);
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

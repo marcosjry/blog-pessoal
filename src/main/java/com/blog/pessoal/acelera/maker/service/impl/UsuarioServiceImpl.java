@@ -2,6 +2,7 @@ package com.blog.pessoal.acelera.maker.service.impl;
 
 import com.blog.pessoal.acelera.maker.DTO.usuario.UsuarioDTO;
 import com.blog.pessoal.acelera.maker.DTO.usuario.UsuarioUpdateDTO;
+import com.blog.pessoal.acelera.maker.exception.PermissaoNaoAutorizada;
 import com.blog.pessoal.acelera.maker.exception.UsuarioJaExisteException;
 import com.blog.pessoal.acelera.maker.model.Resposta;
 import com.blog.pessoal.acelera.maker.model.Usuario;
@@ -9,18 +10,26 @@ import com.blog.pessoal.acelera.maker.repository.UsuarioRepository;
 import com.blog.pessoal.acelera.maker.service.UsuarioService;
 
 import org.hibernate.exception.ConstraintViolationException;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.NoSuchElementException;
+import java.util.Objects;
 
 @Service
 public class UsuarioServiceImpl implements UsuarioService {
 
-    @Autowired
-    private UsuarioRepository usuarioRepository;
+    public UsuarioServiceImpl(@Lazy PasswordEncoder passwordEncoder, @Lazy UsuarioRepository usuarioRepository) {
+        this.passwordEncoder = passwordEncoder;
+        this.usuarioRepository = usuarioRepository;
+    }
+
+    private final UsuarioRepository usuarioRepository;
+
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional
     @Override
@@ -38,14 +47,12 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     public void criaUsuario(UsuarioDTO usuarioDTO) throws UsuarioJaExisteException {
 
-        boolean existe = verificaSeUsuarioExiste(usuarioDTO.usuario());
-        if(existe)
-            throw new UsuarioJaExisteException("Usuario já registrado.");
+        lancaExceptionSeUsuarioExiste(usuarioDTO.usuario());
 
         Usuario userToCreate = new Usuario();
         userToCreate.setUsuario(usuarioDTO.usuario());
         userToCreate.setNome(usuarioDTO.nome());
-        userToCreate.setSenha(usuarioDTO.senha());
+        userToCreate.setSenha(passwordEncoder.encode(usuarioDTO.senha()));
         userToCreate.setFoto(usuarioDTO.foto());
         usuarioRepository.save(userToCreate);
     }
@@ -53,15 +60,19 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Transactional
     @Override
     public Resposta realizaAtualizacao(Long id, UsuarioUpdateDTO usuarioDTO) throws UsuarioJaExisteException {
-            atualizaCadastro(id, usuarioDTO);
-            return new Resposta("Usuario Atualizado com Sucesso.", "success");
+        atualizaCadastro(id, usuarioDTO);
+        return new Resposta("Usuario Atualizado com Sucesso.", "success");
     }
 
     @Transactional
     @Override
-    public Resposta realizaDelete(Long id) {
-            deletaUsuario(id);
-            return new Resposta("Usuário deletado com sucesso.", "success");
+    public Resposta realizaDelete(Long id, String usuario) throws PermissaoNaoAutorizada {
+        Usuario usuarioAutenticado = buscaUsuario(usuario);
+        if(!Objects.equals(usuarioAutenticado.getId(), id))
+            throw new PermissaoNaoAutorizada("Usuário sendo deletado não é o mesmo realizando a operação.");
+
+        deletaUsuario(id);
+        return new Resposta("Usuário deletado com sucesso.", "success");
     }
 
 
@@ -71,6 +82,7 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     public UsuarioDTO atualizaCadastro(Long id, UsuarioUpdateDTO usuarioDTO) throws UsuarioJaExisteException {
+        lancaExceptionSeUsuarioExiste(usuarioDTO.usuario());
         try {
             Usuario usuario = buscaUsuario(id);
 
@@ -120,4 +132,9 @@ public class UsuarioServiceImpl implements UsuarioService {
         usuarioRepository.save(usuario);
     }
 
+    void lancaExceptionSeUsuarioExiste(String usuario) throws UsuarioJaExisteException {
+        boolean existeUsuario = verificaSeUsuarioExiste(usuario);
+        if(existeUsuario)
+            throw new UsuarioJaExisteException("Usuário já existe. Tente novamente.");
+    }
 }

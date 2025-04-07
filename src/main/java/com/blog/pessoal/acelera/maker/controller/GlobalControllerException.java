@@ -1,6 +1,6 @@
 package com.blog.pessoal.acelera.maker.controller;
 
-import com.blog.pessoal.acelera.maker.exception.IntegridadeVioladaException;
+import com.blog.pessoal.acelera.maker.exception.PermissaoNaoAutorizada;
 import com.blog.pessoal.acelera.maker.exception.TemaExisteException;
 import com.blog.pessoal.acelera.maker.exception.UsuarioJaExisteException;
 
@@ -35,9 +35,9 @@ public class GlobalControllerException {
         return ResponseEntity.badRequest().body(ex.getMessage());
     }
 
-    @ExceptionHandler(IntegridadeVioladaException.class)
-    public ResponseEntity<String> handleRollbackException(IntegridadeVioladaException e) {
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage() + "Integridade violada.");
+    @ExceptionHandler(PermissaoNaoAutorizada.class)
+    public ResponseEntity<String> handleRollbackException(PermissaoNaoAutorizada e) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
     }
 
     @ExceptionHandler(TransactionSystemException.class)
@@ -51,21 +51,12 @@ public class GlobalControllerException {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
     }
 
-    @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<String> trataExcecaoGenerica(RuntimeException e) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-    }
-
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<String> trataViolacaoArgumento(MethodArgumentNotValidException e) {
         String message = e.getBindingResult().getFieldError().getDefaultMessage();
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(message);
     }
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<String> trataExcecaoGenerica(Exception ex) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro no servidor.");
-    }
 }
 
 

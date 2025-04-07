@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpMethod;
@@ -17,7 +18,6 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -30,7 +30,7 @@ import java.io.IOException;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    @Bean
+    @Autowired
     public SecurityFilter securityFilter(TokenService tokenService, UsuarioService usuarioService) {
         return new SecurityFilter(tokenService, usuarioService);
     }
@@ -46,6 +46,11 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers("/v3/api-docs/**").permitAll()
+                        .requestMatchers("/swagger-ui/**").permitAll()
+                        .requestMatchers("/swagger-ui.html").permitAll()
+                        .requestMatchers("/swagger-resources/**").permitAll()
+                        .requestMatchers("/webjars/**").permitAll()
                         .requestMatchers(HttpMethod.POST, EndpointConstants.USUARIOS).permitAll()
                         .requestMatchers(HttpMethod.GET, EndpointConstants.USUARIOS_LOGIN).permitAll()
                         .requestMatchers(HttpMethod.POST,EndpointConstants.USUARIOS_LOGIN).permitAll()// Permite o acesso ao login
@@ -72,6 +77,7 @@ public class SecurityConfig {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
+    @Lazy
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

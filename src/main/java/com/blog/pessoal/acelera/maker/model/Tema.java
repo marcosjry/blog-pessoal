@@ -8,6 +8,17 @@ import java.util.List;
 @Entity
 public class Tema {
 
+    public Tema() {}
+
+    public Tema(Long id, String descricao) {
+        setId(id);
+        setDescricao(descricao);
+    }
+
+    public Tema(String descricao) {
+        setDescricao(descricao);
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

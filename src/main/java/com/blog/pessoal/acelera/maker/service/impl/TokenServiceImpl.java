@@ -6,7 +6,7 @@ import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.blog.pessoal.acelera.maker.service.TokenService;
 import com.blog.pessoal.acelera.maker.util.SecretUtil;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -17,8 +17,11 @@ import java.util.Date;
 @Service
 public class TokenServiceImpl implements TokenService {
 
-    @Autowired
-    private SecretUtil secret;
+    public TokenServiceImpl(@Lazy SecretUtil secret) {
+        this.secret = secret;
+    }
+
+    private final SecretUtil secret;
 
     @Override
     public String validateToken(String token) {
@@ -32,7 +35,7 @@ public class TokenServiceImpl implements TokenService {
 
         } catch (JWTVerificationException exception) {
             System.err.println("Token verification failed: " + exception.getMessage());
-            return "";
+            throw new JWTVerificationException("Autorização Negada.");
         }
     }
 
@@ -48,6 +51,20 @@ public class TokenServiceImpl implements TokenService {
                     .sign(algorithm);
         } catch (JWTCreationException exception) {
             throw new RuntimeException("Erro ao gerar Token JWT", exception);
+        }
+    }
+
+    @Override
+    public String extractRole(String token) {
+        try {
+            Algorithm algorithm = Algorithm.HMAC256(secret.getSecret());
+            var decodedJWT = JWT.require(algorithm)
+                    .withIssuer("auth-api")
+                    .build()
+                    .verify(token);
+            return decodedJWT.getClaim("role").asString(); // Retorna "ROLE_SERVICE" ou outro papel
+        } catch (JWTVerificationException exception) {
+            throw new RuntimeException("Error while extracting role from token", exception);
         }
     }
 

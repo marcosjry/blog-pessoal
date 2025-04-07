@@ -7,7 +7,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -23,7 +23,7 @@ public class SecurityFilter extends OncePerRequestFilter {
     private final TokenService tokenService;
     private final UsuarioService usuarioService;
 
-    public SecurityFilter(TokenService tokenService, UsuarioService usuarioService) {
+    public SecurityFilter(@Lazy TokenService tokenService,UsuarioService usuarioService) {
         this.tokenService = tokenService;
         this.usuarioService = usuarioService;
     }
@@ -32,11 +32,18 @@ public class SecurityFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         var token = this.recoverToken(request);
         if (token != null) {
-            var subject = tokenService.validateToken(token);
-            Usuario usuario = usuarioService.buscaUsuario(subject);
+            try {
+                var subject = tokenService.validateToken(token);
+                Usuario usuario = usuarioService.buscaUsuario(subject);
 
-            var authentication = new UsernamePasswordAuthenticationToken(subject, usuario.getPassword(), List.of(new SimpleGrantedAuthority("ROLE_USER")));
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+                var authentication = new UsernamePasswordAuthenticationToken(subject, usuario.getPassword(), List.of(new SimpleGrantedAuthority("ROLE_USER")));
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            } catch (Exception e) {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.setContentType("application/json");
+                response.getWriter().write("{\"erro\": Autorização Negada.}");
+                return;
+            }
         }
         filterChain.doFilter(request, response);
     }

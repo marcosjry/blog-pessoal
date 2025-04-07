@@ -9,6 +9,15 @@ import java.util.Date;
 @Entity
 public class Postagem {
 
+    public Postagem() {}
+
+    public Postagem(String titulo, String texto, Tema tema, Usuario usuario) {
+        setTitulo(titulo);
+        setTexto(texto);
+        setUserId(usuario);
+        setTema(tema);
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
