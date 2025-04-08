@@ -88,7 +88,7 @@ Antes de começar, certifique-se de ter as seguintes ferramentas instaladas:
 git clone (https://github.com/marcosjry/blog-pessoal.git) acelera-maker-blog
 cd acelera-maker-blog
 ```
-###🐘 2. Suba o banco de dados PostgreSQL com Docker
+### 🐘 2. Suba o banco de dados PostgreSQL com Docker
 Este projeto utiliza um banco de dados PostgreSQL. Rode o seguinte comando para criar um container:
 
 ```bash
@@ -133,4 +133,4 @@ ou
 ```bash
 mvn spring-boot:run
 ```
-
+### Documentação do Swagger disponível em: http://localhost:8080/swagger-ui/index.html 🚀
