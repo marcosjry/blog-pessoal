@@ -85,7 +85,7 @@ Antes de começar, certifique-se de ter as seguintes ferramentas instaladas:
 ### ⬇️ 1. Clone o repositório
 
 ```bash
-git clone https://github.com/seu-usuario/acelera-maker-blog.git
+git clone (https://github.com/marcosjry/blog-pessoal.git) acelera-maker-blog
 cd acelera-maker-blog
 ```
 ###🐘 2. Suba o banco de dados PostgreSQL com Docker
