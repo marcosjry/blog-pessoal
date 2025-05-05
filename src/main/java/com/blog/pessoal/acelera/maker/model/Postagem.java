@@ -1,10 +1,8 @@
 package com.blog.pessoal.acelera.maker.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 @Entity
 public class Postagem {
@@ -24,7 +22,7 @@ public class Postagem {
 
     private String titulo;
     private String texto;
-    private Date data;
+    private LocalDate data;
 
     @ManyToOne
     @JoinColumn(name = "tema_id", nullable = false)
@@ -50,11 +48,11 @@ public class Postagem {
         this.tema = tema;
     }
 
-    public Date getData() {
+    public LocalDate getData() {
         return data;
     }
 
-    public void setData(Date data) {
+    public void setData(LocalDate data) {
         this.data = data;
     }
 
