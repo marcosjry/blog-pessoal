@@ -92,14 +92,14 @@ public class SecurityConfig {
 
     @Bean
     public SecretUtil securitySecrets() {
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            Resource resource = new ClassPathResource("secrets.json");
-            // Lê o conteúdo do arquivo como InputStream
-            return mapper.readValue(resource.getInputStream(), SecretUtil.class);
-        } catch (IOException e) {
-            throw new RuntimeException("Não foi possível carregar a secret", e);
+        String secret = System.getenv("SECRET");
+        if (secret == null) {
+            throw new RuntimeException("Variável de ambiente SECRET não encontrada");
         }
+
+        SecretUtil util = new SecretUtil();
+        util.setSecret(secret);
+        return util;
     }
 
     @Bean
