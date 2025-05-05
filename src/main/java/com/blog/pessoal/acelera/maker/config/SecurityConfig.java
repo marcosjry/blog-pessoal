@@ -108,7 +108,7 @@ public class SecurityConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**") // permite todas as rotas
-                        .allowedOrigins("http://localhost:4200") // seu frontend Angular
+                        .allowedOrigins("https://blog-pessoal-acelera.netlify.app") // seu frontend Angular
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // métodos permitidos
                         .allowedHeaders("*") // todos os headers
                         .allowCredentials(true); // se você estiver usando cookies/autenticação
