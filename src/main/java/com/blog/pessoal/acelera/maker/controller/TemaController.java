@@ -2,6 +2,7 @@ package com.blog.pessoal.acelera.maker.controller;
 
 import com.blog.pessoal.acelera.maker.DTO.tema.TemaDTO;
 import com.blog.pessoal.acelera.maker.DTO.tema.TemaDTOResponse;
+import com.blog.pessoal.acelera.maker.exception.PermissaoNaoAutorizada;
 import com.blog.pessoal.acelera.maker.exception.TemaExisteException;
 import com.blog.pessoal.acelera.maker.model.Resposta;
 import com.blog.pessoal.acelera.maker.model.Tema;
@@ -23,6 +24,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @Tag(name = "Temas", description = "Endpoints relacionados à criação, listagem, atualização e exclusão de temas.")
@@ -41,10 +43,10 @@ public class TemaController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<String> criarPostagem(@Valid @RequestBody TemaDTO temaDTO)
+    public ResponseEntity<Map<String, String>> criarPostagem(@Valid @RequestBody TemaDTO temaDTO)
             throws TemaExisteException, RuntimeException {
         Resposta resposta = temaService.criarTema(temaDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(resposta.getMensagem());
+        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("mensagem", resposta.getMensagem()));
     }
 
     @Operation(
@@ -83,12 +85,12 @@ public class TemaController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<String> atualizaTema(
+    public ResponseEntity<Map<String, String>> atualizaTema(
             @PathVariable Long id,
             @Valid @RequestBody TemaDTO temaDTO
-    ) throws TemaExisteException {
+    ) throws TemaExisteException, PermissaoNaoAutorizada {
         Resposta resposta = temaService.atualiza(id, temaDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(resposta.getMensagem());
+        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("mensagem", resposta.getMensagem()));
     }
 
     /**
@@ -123,9 +125,9 @@ public class TemaController {
             path = "/{id}",
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<String> removeTema(@PathVariable Long id) {
+    public ResponseEntity<Map<String, String>> removeTema(@PathVariable Long id) throws PermissaoNaoAutorizada {
         Resposta resposta = temaService.realizaDelete(id);
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(resposta.getMensagem());
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(Map.of("mensagem", resposta.getMensagem()));
     }
 
     @Operation(

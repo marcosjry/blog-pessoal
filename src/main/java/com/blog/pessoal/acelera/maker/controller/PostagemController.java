@@ -23,6 +23,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping(path = "/api/postagens")
@@ -38,26 +39,26 @@ public class PostagemController {
             @ApiResponse(responseCode = "201", description = "Postagem criada com sucesso"),
             @ApiResponse(responseCode = "400", description = "Dados inválidos", content = @Content)
     })
-    public ResponseEntity<String> criaPostagem(@Valid @RequestBody PostagemDTO postagemDTO) {
+    public ResponseEntity<Map<String, String>> criaPostagem(@Valid @RequestBody PostagemDTO postagemDTO) {
         String usuario = CapturaSubject.captura();
         Resposta resposta = postagemService.criarPostagem(postagemDTO, usuario);
-        return ResponseEntity.status(HttpStatus.CREATED).body(resposta.getMensagem());
+        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("mensagem", resposta.getMensagem()));
     }
 
     @PutMapping("/{id}")
     @Operation(summary = "Atualizar postagem", description = "Atualiza uma postagem existente, se for do usuário autenticado.")
-    public ResponseEntity<String> atualizaPostagem(@Parameter(description = "ID da postagem") @PathVariable Long id, @Valid @RequestBody PostagemUpdateDTO postagemDTO) throws PermissaoNaoAutorizada {
+    public ResponseEntity<Map<String, String>> atualizaPostagem(@Parameter(description = "ID da postagem") @PathVariable Long id, @Valid @RequestBody PostagemUpdateDTO postagemDTO) throws PermissaoNaoAutorizada {
         String usuario = CapturaSubject.captura();
         Resposta resposta = postagemService.atualizaPostagem(id,postagemDTO, usuario);
-        return ResponseEntity.status(HttpStatus.CREATED).body(resposta.getMensagem());
+        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("mensagem", resposta.getMensagem()));
     }
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Remover postagem", description = "Remove uma postagem pertencente ao usuário autenticado.")
-    public ResponseEntity<String> removePostagem(@Parameter(description = "ID da postagem") @PathVariable Long id) throws PermissaoNaoAutorizada {
+    public ResponseEntity<Map<String, String>> removePostagem(@Parameter(description = "ID da postagem") @PathVariable Long id) throws PermissaoNaoAutorizada {
         String usuario = CapturaSubject.captura();
         Resposta resposta = postagemService.removerPostagem(id, usuario);
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(resposta.getMensagem());
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(Map.of("mensagem", resposta.getMensagem()));
     }
     @Operation(
             summary = "Filtrar postagens",
@@ -83,7 +84,9 @@ public class PostagemController {
                                 p.getTexto(),
                                 p.getTitulo(),
                                 p.getUserId().getId(),
-                                p.getTema().getId()
+                                p.getUserId().getNome(),
+                                p.getTema().getDescricao(),
+                                p.getData()
                         )
                 )
         );
@@ -101,9 +104,30 @@ public class PostagemController {
                                 p.getTexto(),
                                 p.getTitulo(),
                                 p.getUserId().getId(),
-                                p.getTema().getId()
+                                p.getUserId().getNome(),
+                                p.getTema().getDescricao(),
+                                p.getData()
                         )
                 )
         );
     }
+
+    @GetMapping("/{id}")
+    @Operation(summary = "Busca postagem por ID", description = "Retorna os detalhes de uma única postagem.")
+    public ResponseEntity<PostagemToResponse> listarTodasPostagens(@Parameter(description = "ID da postagem") @PathVariable Long id) {
+        Postagem postagem = postagemService.buscaPostagem(id);
+        return ResponseEntity.accepted().body(
+                        new PostagemToResponse(
+                                postagem.getId(),
+                                postagem.getTexto(),
+                                postagem.getTitulo(),
+                                postagem.getUserId().getId(),
+                                postagem.getUserId().getNome(),
+                                postagem.getTema().getDescricao(),
+                                postagem.getData()
+                        )
+        );
+    }
+
+
 }

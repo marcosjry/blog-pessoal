@@ -1,7 +1,7 @@
 package com.blog.pessoal.acelera.maker.controller;
 
-import com.blog.pessoal.acelera.maker.DTO.usuario.UsuarioLoginDTO;
 import com.blog.pessoal.acelera.maker.DTO.usuario.UsuarioLoginReqDTO;
+import com.blog.pessoal.acelera.maker.DTO.usuario.UsuarioLoginResponseDTO;
 import com.blog.pessoal.acelera.maker.exception.UsuarioSenhaInvalidoException;
 import com.blog.pessoal.acelera.maker.service.UsuarioLoginService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -14,8 +14,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Map;
+
 @RestController
-@RequestMapping(path = "/api/usuarios/login")
+@RequestMapping(path = "/api/usuarios")
 @Tag(name = "Login Usuário", description = "Endpoints para validar login de usuários.")
 public class UsuarioLoginController {
 
@@ -26,10 +28,17 @@ public class UsuarioLoginController {
             summary = "Login Usuário",
             description = "Autentica um usuário, retornando um token JWT."
     )
-    @PostMapping
-    public ResponseEntity<UsuarioLoginDTO> validaLogin(@Valid @RequestBody UsuarioLoginReqDTO usuarioLoginDTO) throws UsuarioSenhaInvalidoException {
-        UsuarioLoginDTO usuario = usuarioLoginService.realizaLogin(usuarioLoginDTO);
+
+    @PostMapping("/login")
+    public ResponseEntity<UsuarioLoginResponseDTO> validaLogin(@Valid @RequestBody UsuarioLoginReqDTO usuarioLoginDTO) throws UsuarioSenhaInvalidoException {
+        UsuarioLoginResponseDTO usuario = usuarioLoginService.realizaLogin(usuarioLoginDTO);
         return ResponseEntity.accepted().body(usuario);
+    }
+
+    @PostMapping("auth/token")
+    public ResponseEntity<Map<String, String>> validaLogin(@RequestBody String token) {
+        var response = usuarioLoginService.validaToken(token);
+        return ResponseEntity.accepted().body(response);
     }
 
 }

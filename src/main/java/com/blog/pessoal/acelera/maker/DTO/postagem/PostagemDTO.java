@@ -1,6 +1,7 @@
 package com.blog.pessoal.acelera.maker.DTO.postagem;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 public record PostagemDTO(
@@ -12,5 +13,6 @@ public record PostagemDTO(
         @NotBlank(message = "Texto não pode estar em branco.")
         String texto,
 
+        @NotNull(message = "Tema não pode ser nulo.")
         Long temaId) {
 }
