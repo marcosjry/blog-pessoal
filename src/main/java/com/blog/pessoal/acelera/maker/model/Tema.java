@@ -1,7 +1,6 @@
 package com.blog.pessoal.acelera.maker.model;
 
 import jakarta.persistence.*;
-import org.springframework.beans.factory.annotation.Value;
 
 import java.util.List;
 
@@ -28,6 +27,17 @@ public class Tema {
 
     @OneToMany(mappedBy = "tema", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Postagem> postagem;
+
+    @ManyToOne
+    private Usuario usuario;
+
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
+    }
 
     public String getDescricao() {
         return descricao;

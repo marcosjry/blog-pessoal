@@ -1,10 +1,14 @@
 package com.blog.pessoal.acelera.maker.service;
 
-import com.blog.pessoal.acelera.maker.DTO.usuario.UsuarioLoginDTO;
 import com.blog.pessoal.acelera.maker.DTO.usuario.UsuarioLoginReqDTO;
+import com.blog.pessoal.acelera.maker.DTO.usuario.UsuarioLoginResponseDTO;
 import com.blog.pessoal.acelera.maker.exception.UsuarioSenhaInvalidoException;
+
+import java.util.Map;
 
 public interface UsuarioLoginService {
 
-    UsuarioLoginDTO realizaLogin(UsuarioLoginReqDTO usuarioLoginDTO) throws UsuarioSenhaInvalidoException;
+    UsuarioLoginResponseDTO realizaLogin(UsuarioLoginReqDTO usuarioLoginDTO) throws UsuarioSenhaInvalidoException;
+
+    Map<String, String> validaToken(String token);
 }
