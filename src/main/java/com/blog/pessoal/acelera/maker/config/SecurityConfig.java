@@ -23,6 +23,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.io.IOException;
 
@@ -63,9 +65,14 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, EndpointConstants.TEMAS).hasRole("USER")
                         .requestMatchers(HttpMethod.POST, EndpointConstants.POSTAGENS).hasRole("USER")
                         .requestMatchers(HttpMethod.PUT, EndpointConstants.POSTAGENS_ID).hasRole("USER")
+                        .requestMatchers(HttpMethod.GET, EndpointConstants.POSTAGENS_ID).permitAll()
                         .requestMatchers(HttpMethod.DELETE, EndpointConstants.POSTAGENS_ID).hasRole("USER")
-                        .requestMatchers(HttpMethod.GET, EndpointConstants.POSTAGENS_FILTRO).hasRole("USER")
-                        .requestMatchers(HttpMethod.GET, EndpointConstants.POSTAGENS).hasRole("USER")
+                        .requestMatchers(HttpMethod.GET, EndpointConstants.POSTAGENS_FILTRO).permitAll()
+                        .requestMatchers(HttpMethod.GET, EndpointConstants.POSTAGENS).permitAll()
+                        .requestMatchers(HttpMethod.GET, EndpointConstants.POSTAGENS_BY_USER).hasRole("USER")
+                        .requestMatchers(HttpMethod.GET, EndpointConstants.POSTAGENS_BY_DATE).hasRole("USER")
+                        .requestMatchers(HttpMethod.GET, EndpointConstants.POSTAGENS_TOTAL_NUMBER).hasRole("USER")
+                        .requestMatchers(HttpMethod.POST, EndpointConstants.VALIDATE_USER_TOKEN).hasRole("USER")
                         .anyRequest().authenticated() // Exige autenticação para outras rotas
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
@@ -94,4 +101,19 @@ public class SecurityConfig {
             throw new RuntimeException("Não foi possível carregar a secret", e);
         }
     }
+
+    @Bean
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/**") // permite todas as rotas
+                        .allowedOrigins("http://localhost:4200") // seu frontend Angular
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // métodos permitidos
+                        .allowedHeaders("*") // todos os headers
+                        .allowCredentials(true); // se você estiver usando cookies/autenticação
+            }
+        };
+    }
+
 }
