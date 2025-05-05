@@ -16,8 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Instant;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
@@ -47,7 +46,7 @@ public class PostagemServiceImpl implements PostagemService {
         Usuario usuario = usuarioService.buscaUsuario(userName);
 
         Postagem postagem = new Postagem();
-        postagem.setData(Date.from(Instant.now()));
+        postagem.setData(LocalDate.now());
         postagem.setTexto(postagemDTO.texto());
         postagem.setTitulo(postagemDTO.titulo());
         postagem.setUserId(usuario);
