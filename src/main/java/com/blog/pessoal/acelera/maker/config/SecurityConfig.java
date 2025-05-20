@@ -68,6 +68,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, EndpointConstants.POSTAGENS_ID).permitAll()
                         .requestMatchers(HttpMethod.DELETE, EndpointConstants.POSTAGENS_ID).hasRole("USER")
                         .requestMatchers(HttpMethod.GET, EndpointConstants.POSTAGENS_FILTRO).permitAll()
+                        .requestMatchers(HttpMethod.GET, EndpointConstants.POSTAGENS_LAST_POSTS).hasRole("USER")
                         .requestMatchers(HttpMethod.GET, EndpointConstants.POSTAGENS).permitAll()
                         .requestMatchers(HttpMethod.GET, EndpointConstants.POSTAGENS_BY_USER).hasRole("USER")
                         .requestMatchers(HttpMethod.GET, EndpointConstants.POSTAGENS_BY_DATE).hasRole("USER")
