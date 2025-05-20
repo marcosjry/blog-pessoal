@@ -13,6 +13,7 @@ public class EndpointConstants {
         public static final String POSTAGENS_BY_USER = "/stats/posts-per-user";
         public static final String POSTAGENS_BY_DATE = "/stats/posts-by-date";
         public static final String POSTAGENS_TOTAL_NUMBER = "/stats/total-posts";
+        public static final String POSTAGENS_LAST_POSTS = "/stats/last-posts";
 
         public static final String VALIDATE_USER_TOKEN = "/api/usuarios/auth-token";
 

@@ -3,6 +3,7 @@ package com.blog.pessoal.acelera.maker.repository;
 import com.blog.pessoal.acelera.maker.DTO.postagem.PostStatsByUserDTO;
 import com.blog.pessoal.acelera.maker.DTO.postagem.PostsByDate;
 import com.blog.pessoal.acelera.maker.model.Postagem;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -23,4 +24,5 @@ public interface PostagemRepository extends JpaRepository<Postagem, Long>, JpaSp
     @Query("SELECT COUNT(p) FROM Postagem p")
     Long countNumOfPosts();
 
+    Page<Postagem> findAllByOrderByDataDesc(Pageable pageable);
 }
