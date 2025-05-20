@@ -110,6 +110,10 @@ public class PostagemServiceImpl implements PostagemService {
             postagem.setTexto(campos.texto());
         if(campos.titulo() != null)
             postagem.setTitulo(campos.titulo());
+        if(campos.temaId() != null) {
+            Tema tema = temaService.buscaTema(campos.temaId());
+            postagem.setTema(tema);
+        }
         return postagem;
     }
 

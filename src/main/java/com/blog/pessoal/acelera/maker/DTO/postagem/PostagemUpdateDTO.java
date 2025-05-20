@@ -12,4 +12,9 @@ public record PostagemUpdateDTO(
 
         @JsonDeserialize(using = DeserializadorStringParaNull.class)
         @Size(min = 5, max = 300, message = "Digite no mínimo 5 caracteres.")
-        String texto) { }
+        String texto,
+
+        Long temaId
+
+) { }
+
